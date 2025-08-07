@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 249, 249, 249;
+  --background-start-rgb: 46, 46, 46;
+  --background-end-rgb: 26, 26, 26;
+}
+
+body {
+  font-family: var(--font-inter);
+}
+
+.luxury-card {
+  background: rgba(79, 79, 79, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.luxury-input {
+  background-color: rgba(249, 249, 249, 0.05);
+  border: 1px solid rgba(255, 209, 26, 0.3);
+  color: #F9F9F9;
+  transition: all 0.3s ease;
+}
+
+.luxury-input:focus {
+  border-color: #FFD11A;
+  box-shadow: 0 0 0 2px rgba(255, 209, 26, 0.2);
+}
+
+.luxury-input::placeholder {
+  color: rgba(249, 249, 249, 0.5);
+}
+
+.luxury-button {
+  background: linear-gradient(145deg, #FFD11A, #E6B800);
+  transition: all 0.3s ease;
+}
+
+.luxury-button:hover {
+  background: linear-gradient(145deg, #FFE680, #FFD11A);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(255, 209, 26, 0.2);
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
