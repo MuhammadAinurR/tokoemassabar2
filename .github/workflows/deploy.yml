@@ -1,0 +1,62 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Archive production build
+        run: |
+          mkdir -p build-output
+          cp -R .next package.json package-lock.json build-output/
+          tar -czf build.tar.gz -C build-output . || { echo "Failed to create tar.gz"; exit 1; }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build.tar.gz
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to VPS
+        run: |
+          scp -o StrictHostKeyChecking=no build.tar.gz tokoemassabar@103.150.93.23:/var/www/gold-shop-main || { echo "Failed to copy file"; exit 1; }
+          ssh -o StrictHostKeyChecking=no tokoemassabar@103.150.93.23 'source ~/.nvm/nvm.sh && cd /var/www/gold-shop-main && tar -xzvf build.tar.gz || { echo "Failed to extract tar.gz"; exit 1; } && /home/tokoemassabar/.nvm/versions/node/v22.15.0/bin/npm install --omit=dev && pm2 restart nextjs-app'
