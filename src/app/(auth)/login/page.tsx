@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { showToast } from "@/lib/showToast";
-import { useAuth } from "@/context/AuthContext";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { showToast } from '@/lib/showToast';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,36 +13,36 @@ export default function LoginPage() {
 
   const loginUser = async (formData: FormData) => {
     setIsLoading(true);
-    const username = formData.get("username");
-    const password = formData.get("password");
+    const username = formData.get('username');
+    const password = formData.get('password');
 
-    if (typeof username !== "string" || typeof password !== "string") {
-      console.error("Invalid username or password");
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      console.error('Invalid username or password');
       setIsLoading(false);
       return;
     }
 
     try {
       const response = await fetch(`/api/login`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
-        credentials: "include",
+        credentials: 'include',
       });
 
       const data = await response.json();
 
       if (response.ok) {
         login(data.user);
-        showToast("success", `Selamat datang ${data.user.username}`);
-        data.user.role === "admin" ? router.push("/dashboard") : router.push("/transaksi/penjualan");
+        showToast('success', `Selamat datang ${data.user.username}`);
+        data.user.role === 'admin' ? router.push('/dashboard') : router.push('/transaksi/penjualan');
       } else {
-        showToast("warning", "Terjadi Kesalahan");
+        showToast('warning', 'Terjadi Kesalahan');
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 luxury-card p-10 rounded-xl">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-accent-300">Toko Emas</h2>
-          <h2 className="text-center text-3xl font-extrabold text-accent-300">Sabar</h2>
+          <h2 className="text-center text-3xl font-extrabold text-accent-300">Sabar 2</h2>
         </div>
         <form
           className="mt-8 space-y-6"
@@ -105,17 +105,17 @@ export default function LoginPage() {
             <button
               type="submit"
               className={`luxury-button group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-luxury-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-400 ${
-                isLoading ? "animate-pulse" : ""
+                isLoading ? 'animate-pulse' : ''
               }`}
               disabled={isLoading}
             >
-              {isLoading ? "Sedang Masuk..." : "Masuk"}
+              {isLoading ? 'Sedang Masuk...' : 'Masuk'}
             </button>
           </div>
         </form>
         <div className="text-center">
           <p className="text-sm text-luxury-200">
-            Belum punya akun?{" "}
+            Belum punya akun?{' '}
             <Link href="/register" className="font-medium text-accent-300 hover:text-accent-200">
               Daftar
             </Link>

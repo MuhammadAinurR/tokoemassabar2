@@ -1,27 +1,18 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon, PrinterIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { id } from "date-fns/locale";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { useAppMode } from "@/context/AppModeContext";
-import { getApiEndpoint, getModeDisplayName } from "@/lib/modeUtils";
-import type { AppMode } from "@/context/AppModeContext";
+import * as React from 'react';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon, PrinterIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { id } from 'date-fns/locale';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useAppMode } from '@/context/AppModeContext';
+import { getApiEndpoint, getModeDisplayName } from '@/lib/modeUtils';
+import type { AppMode } from '@/context/AppModeContext';
 
 interface Finance {
   id: string;
@@ -39,14 +30,14 @@ interface Finance {
 
 const formatNumberInput = (value: string): string => {
   // Remove all non-digit characters
-  const numbers = value.replace(/\D/g, "");
+  const numbers = value.replace(/\D/g, '');
   // Format with thousand separators
-  return numbers.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return numbers.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
 const parseFormattedNumber = (value: string): number => {
   // Remove all dots and convert to number
-  return parseInt(value.replace(/\./g, ""), 10);
+  return parseInt(value.replace(/\./g, ''), 10);
 };
 
 export default function FinancePage() {
@@ -58,10 +49,8 @@ export default function FinancePage() {
   const [startDate, setStartDate] = React.useState<Date | null>(null);
   const [endDate, setEndDate] = React.useState<Date | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
-  const [selectedFinance, setSelectedFinance] = React.useState<Finance | null>(
-    null
-  );
-  const [editValue, setEditValue] = React.useState("");
+  const [selectedFinance, setSelectedFinance] = React.useState<Finance | null>(null);
+  const [editValue, setEditValue] = React.useState('');
 
   const fetchData = async () => {
     try {
@@ -75,14 +64,14 @@ export default function FinancePage() {
       });
 
       // Use mode-aware API endpoint
-      const financeEndpoint = getApiEndpoint("/api/finance", mode);
+      const financeEndpoint = getApiEndpoint('/api/finance', mode);
       const response = await fetch(`${financeEndpoint}?${params}`);
       const { data, pagination } = await response.json();
 
       setFinances([...data].reverse());
       setTotalPages(pagination.pages);
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
     }
@@ -96,10 +85,7 @@ export default function FinancePage() {
 
   const renderPagination = () => (
     <div className="mt-4 flex items-center justify-between">
-      <Button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-      >
+      <Button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
         Previous
       </Button>
       <span>
@@ -122,15 +108,15 @@ export default function FinancePage() {
       const params = new URLSearchParams({
         startDate: startDate.toISOString(),
         endDate: new Date(endDate.setHours(23, 59, 59, 999)).toISOString(),
-        all: "true", // New parameter to fetch all data
+        all: 'true', // New parameter to fetch all data
       });
 
       // Use mode-aware API endpoint for printing
-      const financeEndpoint = getApiEndpoint("/api/finance", mode);
+      const financeEndpoint = getApiEndpoint('/api/finance', mode);
       const response = await fetch(`${financeEndpoint}?${params}`);
       const { data } = await response.json();
 
-      const printWindow = window.open("", "_blank");
+      const printWindow = window.open('', '_blank');
       if (!printWindow) return;
 
       const tableRows =
@@ -146,33 +132,25 @@ export default function FinancePage() {
               .map(
                 (finance: Finance) => `
         <tr>
-          <td>${format(new Date(finance.date), "dd/MM/yyyy")}</td>
-          <td style="text-align: right">${formatIDR(
-            finance.openingBalance
-          )}</td>
+          <td>${format(new Date(finance.date), 'dd/MM/yyyy')}</td>
+          <td style="text-align: right">${formatIDR(finance.openingBalance)}</td>
           <td style="text-align: right">${finance.outgoingItems}g</td>
           <td style="text-align: right">${formatIDR(finance.incomingMoney)}</td>
           <td style="text-align: right">${finance.incomingItems}g</td>
           <td style="text-align: right">${formatIDR(finance.outgoingMoney)}</td>
           <td style="text-align: right">${formatIDR(finance.totalIncome)}</td>
           <td style="text-align: right">${formatIDR(finance.totalExpense)}</td>
-          <td style="text-align: right; font-weight: bold">${formatIDR(
-            finance.closingBalance
-          )}</td>
+          <td style="text-align: right; font-weight: bold">${formatIDR(finance.closingBalance)}</td>
           <td style="text-align: right">${
-            finance.storeClosingBalance
-              ? formatIDR(finance.storeClosingBalance)
-              : "-"
+            finance.storeClosingBalance ? formatIDR(finance.storeClosingBalance) : '-'
           }</td>
           <td style="text-align: right">${
-            finance.storeClosingBalance
-              ? formatIDR(finance.closingBalance - finance.storeClosingBalance)
-              : "-"
+            finance.storeClosingBalance ? formatIDR(finance.closingBalance - finance.storeClosingBalance) : '-'
           }</td>
         </tr>
       `
               )
-              .join("");
+              .join('');
 
       const tableHTML = `
         <html>
@@ -235,17 +213,13 @@ export default function FinancePage() {
       printWindow.document.close();
       printWindow.print();
     } catch (error) {
-      console.error("Failed to fetch print data:", error);
+      console.error('Failed to fetch print data:', error);
     }
   };
 
   const handleStoreBalanceClick = (finance: Finance) => {
     setSelectedFinance(finance);
-    setEditValue(
-      finance.storeClosingBalance
-        ? formatNumberInput(finance.storeClosingBalance.toString())
-        : ""
-    );
+    setEditValue(finance.storeClosingBalance ? formatNumberInput(finance.storeClosingBalance.toString()) : '');
     setIsEditDialogOpen(true);
   };
 
@@ -254,11 +228,11 @@ export default function FinancePage() {
 
     try {
       // Use mode-aware API endpoint for updating
-      const financeEndpoint = getApiEndpoint("/api/finance", mode);
+      const financeEndpoint = getApiEndpoint('/api/finance', mode);
       const response = await fetch(financeEndpoint, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id: selectedFinance.id,
@@ -266,12 +240,12 @@ export default function FinancePage() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to update");
+      if (!response.ok) throw new Error('Failed to update');
 
       await fetchData();
       setIsEditDialogOpen(false);
     } catch (error) {
-      console.error("Failed to update store closing balance:", error);
+      console.error('Failed to update store closing balance:', error);
     }
   };
 
@@ -289,23 +263,8 @@ export default function FinancePage() {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold">Laporan Keuangan</h1>
-          <span
-            className={`px-3 py-1 text-sm font-medium rounded-full ${
-              mode === "emas_muda"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-blue-100 text-blue-800"
-            }`}
-          >
-            {getModeDisplayName(mode)}
-          </span>
-        </div>
-        <Button
-          onClick={handlePrint}
-          className="flex items-center gap-2"
-          disabled={!startDate || !endDate}
-        >
+        <h1 className="text-3xl font-bold">Laporan Keuangan</h1>
+        <Button onClick={handlePrint} className="flex items-center gap-2" disabled={!startDate || !endDate}>
           <PrinterIcon className="h-4 w-4" />
           Print
         </Button>
@@ -316,27 +275,18 @@ export default function FinancePage() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !startDate && "text-muted-foreground"
-                )}
+                variant={'outline'}
+                className={cn('w-full justify-start text-left font-normal', !startDate && 'text-muted-foreground')}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? (
-                  format(startDate, "EEEE, dd MMMM yyyy", { locale: id })
-                ) : (
-                  <span>Pilih tanggal</span>
-                )}
+                {startDate ? format(startDate, 'EEEE, dd MMMM yyyy', { locale: id }) : <span>Pilih tanggal</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
                 selected={startDate || undefined}
-                onSelect={(date: Date | undefined) =>
-                  setStartDate(date || null)
-                }
+                onSelect={(date: Date | undefined) => setStartDate(date || null)}
                 initialFocus
                 locale={id}
               />
@@ -348,18 +298,11 @@ export default function FinancePage() {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !endDate && "text-muted-foreground"
-                )}
+                variant={'outline'}
+                className={cn('w-full justify-start text-left font-normal', !endDate && 'text-muted-foreground')}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? (
-                  format(endDate, "EEEE, dd MMMM yyyy", { locale: id })
-                ) : (
-                  <span>Pilih tanggal</span>
-                )}
+                {endDate ? format(endDate, 'EEEE, dd MMMM yyyy', { locale: id }) : <span>Pilih tanggal</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -394,49 +337,27 @@ export default function FinancePage() {
           <tbody>
             {loading ? (
               <tr>
-                <td
-                  colSpan={11}
-                  className="border border-gray-300 p-4 text-center"
-                >
+                <td colSpan={11} className="border border-gray-300 p-4 text-center">
                   Loading...
                 </td>
               </tr>
             ) : finances.length === 0 ? (
               <tr>
-                <td
-                  colSpan={11}
-                  className="border border-gray-300 p-4 text-center font-medium"
-                >
+                <td colSpan={11} className="border border-gray-300 p-4 text-center font-medium">
                   Tidak ada data keuangan
                 </td>
               </tr>
             ) : (
               finances.map((finance) => (
                 <tr key={finance.id}>
-                  <td className="border border-gray-300 p-2">
-                    {format(new Date(finance.date), "dd/MM/yyyy")}
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {formatIDR(finance.openingBalance)}
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {finance.outgoingItems}g
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {formatIDR(finance.incomingMoney)}
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {finance.incomingItems}g
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {formatIDR(finance.outgoingMoney)}
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {formatIDR(finance.totalIncome)}
-                  </td>
-                  <td className="border border-gray-300 p-2 text-right">
-                    {formatIDR(finance.totalExpense)}
-                  </td>
+                  <td className="border border-gray-300 p-2">{format(new Date(finance.date), 'dd/MM/yyyy')}</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatIDR(finance.openingBalance)}</td>
+                  <td className="border border-gray-300 p-2 text-right">{finance.outgoingItems}g</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatIDR(finance.incomingMoney)}</td>
+                  <td className="border border-gray-300 p-2 text-right">{finance.incomingItems}g</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatIDR(finance.outgoingMoney)}</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatIDR(finance.totalIncome)}</td>
+                  <td className="border border-gray-300 p-2 text-right">{formatIDR(finance.totalExpense)}</td>
                   <td className="border border-gray-300 p-2 text-right font-bold">
                     {formatIDR(finance.closingBalance)}
                   </td>
@@ -444,16 +365,12 @@ export default function FinancePage() {
                     className="border border-gray-300 p-2 text-right cursor-pointer hover:bg-gray-50"
                     onClick={() => handleStoreBalanceClick(finance)}
                   >
-                    {finance.storeClosingBalance
-                      ? formatIDR(finance.storeClosingBalance)
-                      : "-"}
+                    {finance.storeClosingBalance ? formatIDR(finance.storeClosingBalance) : '-'}
                   </td>
                   <td className="border border-gray-300 p-2 text-right">
                     {finance.storeClosingBalance
-                      ? formatIDR(
-                          finance.storeClosingBalance - finance.closingBalance
-                        )
-                      : "-"}
+                      ? formatIDR(finance.storeClosingBalance - finance.closingBalance)
+                      : '-'}
                   </td>
                 </tr>
               ))
@@ -470,9 +387,7 @@ export default function FinancePage() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium">
-                Tanggal:{" "}
-                {selectedFinance &&
-                  format(new Date(selectedFinance.date), "dd/MM/yyyy")}
+                Tanggal: {selectedFinance && format(new Date(selectedFinance.date), 'dd/MM/yyyy')}
               </label>
             </div>
             <div>
@@ -488,10 +403,7 @@ export default function FinancePage() {
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditDialogOpen(false)}
-              >
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                 Batal
               </Button>
               <Button onClick={handleSaveEdit}>Simpan</Button>
@@ -504,9 +416,9 @@ export default function FinancePage() {
 }
 
 const formatIDR = (amount: number) => {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
     minimumFractionDigits: 0,
   }).format(amount);
 };

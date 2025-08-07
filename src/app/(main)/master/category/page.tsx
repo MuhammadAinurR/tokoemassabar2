@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, SortableTableHead, TableHeader, TableRow }
 import Modal from '@/components/ui/modal';
 import { useForm } from 'react-hook-form';
 import { useAppMode } from '@/context/AppModeContext';
-import { getApiEndpoint } from '@/lib/modeUtils';
+import { getApiEndpoint, getModeDisplayName } from '@/lib/modeUtils';
 
 // Add number formatting utility
 const formatCurrency = (value: number | null | undefined): string => {
@@ -211,7 +211,16 @@ export default function CategoryPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Kategori Barang</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold">Kategori Barang</h1>
+          <span
+            className={`px-3 py-1 text-sm font-medium rounded-full ${
+              mode === 'emas_muda' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
+            }`}
+          >
+            {getModeDisplayName(mode)}
+          </span>
+        </div>
         <Button
           className="bg-gray-600 hover:bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
           onClick={() => setIsModalOpen(true)}
